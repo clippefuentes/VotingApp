@@ -8,11 +8,12 @@ contract Voting {
     string picUrl;
     uint votes;
   }
-  mapping(address => bool) hasVoted;
-  Candidate[] candidates;
-  Candidate winner;
-  bool electionStarted;
-  bool electionEnded;
+  mapping(address => bool) public hasVoted;
+  Candidate[] public candidates;
+  Candidate public winner;
+  bool public electionStarted;
+  bool public electionEnded;
+  address public commissioner;
 
   constructor(
     string[] memory names,
@@ -29,10 +30,16 @@ contract Voting {
       });
       candidates.push(candidate);
     }
+    commissioner = msg.sender;
   }
 
   modifier hasNotVoted {
     require(!hasVoted[msg.sender]);
+    _;
+  }
+
+  modifier isCommissioner {
+    require(msg.sender == commissioner);
     _;
   }
   
@@ -54,12 +61,13 @@ contract Voting {
     return hasVoted[msg.sender];
   }
 
-  function startElection() external {
+  function startElection() external isCommissioner {
     require(!electionStarted && !electionEnded);
     electionStarted = true;
+    assert(electionStarted);
   }
 
-  function endElection() external {
+  function endElection() external isCommissioner {
     require(electionStarted && !electionEnded);
     electionEnded = true;
     setWinner();
@@ -77,4 +85,5 @@ contract Voting {
     }
     winner = candidates[winnerIndex];
   }
+  
 }

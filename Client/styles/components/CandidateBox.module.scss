@@ -1,0 +1,30 @@
+.candidateBox {
+  // background-color: orangered;
+  width: 18rem;
+  border: none;
+}
+
+.candidateBoxHeader {
+  height: 18rem;
+}
+
+.candidateBoxImage {
+  width: 18rem;
+  height: 18rem;
+  border-radius: 2rem 2rem 0 0;
+}
+
+.candidateBoxInfo {
+  border-radius: 0 0 2rem 2rem;
+  overflow: hidden;
+}
+
+.candidateBoxInfoName {
+  text-align: center;
+  background-color: palevioletred;
+}
+
+.candidateBoxInfoDescUrl {
+  text-align: center;
+  background-color: paleturquoise;
+}

@@ -15,6 +15,10 @@ contract Voting {
   bool public electionEnded;
   address public commissioner;
 
+  event VoteCandidate();
+  event StartElection();
+  event EndElection(Candidate cadidate);
+
   constructor(
     string[] memory names,
     string[] memory descUrls,
@@ -55,6 +59,7 @@ contract Voting {
     require(electionStarted && !electionEnded);
     candidates[index].votes++;
     hasVoted[msg.sender] = true;
+    emit VoteCandidate();
   }
 
   function getHasVoted() public view returns (bool) {
@@ -65,6 +70,7 @@ contract Voting {
     require(!electionStarted && !electionEnded);
     electionStarted = true;
     assert(electionStarted);
+    emit StartElection();
   }
 
   function endElection() external isCommissioner {
@@ -84,6 +90,7 @@ contract Voting {
       }
     }
     winner = candidates[winnerIndex];
+    emit EndElection(winner);
   }
   
 }

@@ -21,24 +21,25 @@ const Candidate = (props: ICandidate) => {
       const VotingContract = await getContract();
       const didVote = await VotingContract.methods.getHasVoted().call({ from: accounts[0] })
       if (didVote) {
+        // console.log('hasVoted', didVote)
         setHasVoted(true)
       }
-      console.log('didVote', didVote)
-      console.log("Connected", accounts[0]);
-      console.log('candidate', candidate)
+      // console.log('didVote', didVote)
+      // console.log("Connected", accounts[0]);
+      // console.log('candidate', candidate)
 
       const electionStarted = await VotingContract.methods.electionStarted.call().call()
 
       if (electionStarted) {
         setElectionStarted(true)
       }
-      console.log('electionStarted', electionStarted)
+      // console.log('electionStarted', electionStarted)
       const electionEnded = await VotingContract.methods.electionEnded.call().call()
 
       if (electionEnded) {
         setElectionEnded(true)
       }
-      console.log('electionEnded', electionEnded)
+      // console.log('electionEnded', electionEnded)
 
     }
   }
@@ -52,6 +53,7 @@ const Candidate = (props: ICandidate) => {
         const VotingContract = await getContract();
         console.log('candidate.index:', candidate.candidateId)
         const voteCandidate = await VotingContract.methods.voteCandidate(Number(candidate.candidateId)).send({ from: accounts[0] })
+        setHasVoted(true)
         console.log('voteCandidate', voteCandidate)
       }
     } catch (err) {
@@ -64,9 +66,12 @@ const Candidate = (props: ICandidate) => {
     (async () => {
       await init()
     })()
-  })
+  }, [])
 
   const Button = () => {
+    console.log('hasVoted', hasVoted)
+    console.log('electionStarted', electionStarted)
+    console.log('electionEnded', electionEnded)
     if (electionStarted && hasMetamask && hasVoted && !electionEnded) {
       return (<div className={styles.CandidateDisable}>
         You already voted
@@ -83,7 +88,7 @@ const Candidate = (props: ICandidate) => {
           Election not started
         </div>
       )
-    } else if (!electionEnded) {
+    } else if (electionStarted && !electionEnded && hasVoted) {
       return (
         (
           <div className={styles.CandidateDisable}>
@@ -91,8 +96,8 @@ const Candidate = (props: ICandidate) => {
           </div>
         )
       )
-    } else if (electionStarted && !electionEnded && hasMetamask && !hasVoted) {
-      (
+    } else if (electionStarted && !electionEnded && !hasVoted) {
+      return (
         <button className={styles.Button} onClick={vote}>
           Vote {candidate.name}
         </button>
@@ -121,6 +126,9 @@ const Candidate = (props: ICandidate) => {
         <div>{candidate.descUrl}</div>
         <div>Vote: {candidate.votes}</div>
         <div>
+          {
+            hasVoted
+          }
           {
             Button()
           }

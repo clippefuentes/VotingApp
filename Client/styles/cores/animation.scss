@@ -1,0 +1,9 @@
+@keyframes pulse {
+  0%,
+  100% {
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}

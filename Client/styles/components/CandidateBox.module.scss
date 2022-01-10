@@ -1,7 +1,13 @@
+@import "styles/cores/animation";
+@import "styles/cores/color";
+
 .candidateBox {
   // background-color: orangered;
   width: 18rem;
   border: none;
+  &:hover {
+    animation: pulse 1s infinite;
+  }
 }
 
 .candidateBoxHeader {
@@ -14,17 +20,31 @@
   border-radius: 2rem 2rem 0 0;
 }
 
-.candidateBoxInfo {
+.candidateBoxFooter {
   border-radius: 0 0 2rem 2rem;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.candidateBoxInfo {
+  display: block;
+  width: 100%;
+}
+
+.candidateBoxInfoBox {
+  background-color: $color-1;
+  display: flex;
+  justify-content: center;
 }
 
 .candidateBoxInfoName {
   text-align: center;
-  background-color: palevioletred;
+  font-weight: 700;
 }
 
 .candidateBoxInfoDescUrl {
+  margin-left: 0.2rem;
   text-align: center;
-  background-color: paleturquoise;
 }

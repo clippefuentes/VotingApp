@@ -1,0 +1,18 @@
+@import "styles/cores/color";
+
+@mixin button1 {
+  background-color: $color-1;
+  color: white;
+  border: none;
+  border-radius: 10rem;
+  padding: 1rem 2rem;
+  transition: .3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.Button {
+  @include button1;
+}

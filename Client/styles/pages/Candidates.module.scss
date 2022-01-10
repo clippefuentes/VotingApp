@@ -1,4 +1,18 @@
+@import "styles/cores/typography";
+
 .candidates {
+  display: flex;
+  flex-direction: column;
+}
+
+.candidateTitle {
+  display: flex;
+  justify-content: center;
+  font-size: $title-font-size;
+  margin-bottom: 3rem;
+}
+
+.candidatesList {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;

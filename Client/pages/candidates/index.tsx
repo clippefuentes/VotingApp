@@ -18,9 +18,9 @@ const Candidate = (props: CandidateProps) => {
   }, [candidates])
 
   return (
-    <div>
-      <div>List Of Candidates</div>
-      <div className={styles.candidates}>
+    <div className={styles.candidates}>
+      <div className={styles.candidateTitle}>List Of Candidates</div>
+      <div className={styles.candidatesList}>
         {candidates.map((candidate) => <CandidateBox key={candidate.name} candidate={candidate} />)}
       </div>
     </div>
@@ -28,13 +28,17 @@ const Candidate = (props: CandidateProps) => {
 }
 
 export const getStaticProps = async (context: GetStaticPropsContext) => {
-  const provider = new Web3.providers.HttpProvider('http://localhost:7545')
+  if (!process.env.contractAddress) {
+    return { notFound: true };
+  }
+  const provider = new Web3.providers.HttpProvider('http://localhost:8545')
   const web3 = new Web3(provider)
   const VotingABI: any = Voting.abi
-  const VotingContract = new web3.eth.Contract(VotingABI, '0x33Fc25a223c76d2C589D78da19465013247CA052')
+  const VotingContract = new web3.eth.Contract(VotingABI, process.env.contractAddress)
   const candidates = await VotingContract.methods.getCandidates().call()
-  const mappedCandidates = candidates.map((candidate: string) => {
+  const mappedCandidates = candidates.map((candidate: string, index: number) => {
     return {
+      index,
       name: candidate[0],
       descUrl: candidate[1],
       picUrl: candidate[2],

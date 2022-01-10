@@ -2,16 +2,11 @@
 @import "styles/cores/color";
 @import "styles/cores/ui";
 
-.Container {
-  color: inherit;
-}
-
 .Title {
   display: flex;
   justify-content: center;
   font-size: $title-font-size;
   margin-bottom: 3rem;
-  text-align: center;
 }
 
 .ButtonGroup {
@@ -21,14 +16,7 @@
   flex-direction: column;
 }
 
-.HomeButton {
+.Button {
   @include button1;
   margin: 1rem 0rem;
-}
-
-.Winner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
 }

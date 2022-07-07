@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "@std/Test.sol";
 
 contract ContractTest is Test {
-    uint256 testNumber;
+    uint256 public testNumber;
     function setUp() public {
         testNumber = 42;
     }

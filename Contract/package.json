@@ -21,5 +21,8 @@
         "test": "make test",
         "snapshot": "make snapshot",
         "lint": "make lint"
+    },
+    "dependencies": {
+        "@openzeppelin/contracts": "^4.7.0"
     }
 }

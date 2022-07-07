@@ -19,15 +19,30 @@ contract Election {
     status = ElectionStatus.NOMINATION;
   }
 
-  function nomitateCandidate(uint256 candidateId) public {
+  function nominateCandidate(uint256 candidateId) external onlyStatus(ElectionStatus.NOMINATION) {
     candidatesRunning.add(candidateId);
   }
 
-  function revokeCandidate(uint256 candidateId) public {
-    candidatesRunning.remove(candidateId);
+  function revokeCandidate(uint256 candidateId) external onlyStatus(ElectionStatus.NOMINATION) {
+    _removeCandidate(candidateId);
+  }
+
+  function conceedCandidate(uint256 candidateId) external onlyStatus(ElectionStatus.END) {
+    _removeCandidate(candidateId);
   }
 
   function candidateRunning() public view returns (uint256[] memory) {
     return candidatesRunning.values();
+  }
+
+  // --------------
+  function _removeCandidate(uint256 candidateId) private onlyStatus(ElectionStatus.END) {
+    candidatesRunning.remove(candidateId);
+  }
+
+  // Modifier
+  modifier onlyStatus(ElectionStatus _status) {
+    require(status == _status, "Election: Not following status");
+    _;
   }
 }

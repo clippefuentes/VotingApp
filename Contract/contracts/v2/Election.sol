@@ -20,8 +20,8 @@ contract Election is AccessControl {
   // The ElectionComission and the admin user from electionCommission is the initial commissioner of this election
   constructor(address altCommisioner) {
     status = ElectionStatus.NOMINATION;
-    _setupRole(ADMIN_ROLE, _msgSender());
-    _setupRole(ADMIN_ROLE, altCommisioner);
+    grantRole(ADMIN_ROLE, _msgSender());
+    grantRole(ADMIN_ROLE, altCommisioner);
   }
 
   // Election Function
@@ -36,12 +36,18 @@ contract Election is AccessControl {
   }
 
   /**
-    Start election, only ElectionCommitioner can start election
+    Start election, only ADMIN can start election and can start if only its on NOMINATION mode
   */
   function startElection() external onlyStatus(ElectionStatus.NOMINATION) onlyRole(ADMIN_ROLE)  {
     status = ElectionStatus.ELECTION;
     endDate = block.timestamp + 1 days;
   }
+
+  /**
+    End election, only ElectionCommitioner can start election and can start if only its on ELECTION mode
+    and when its way past on its eleciton end date
+    PLAN: This can be automated.
+  */
 
   function endElection() external onlyStatus(ElectionStatus.ELECTION) onlyRole(ADMIN_ROLE) electionTimeEnded {
     status = ElectionStatus.END;
@@ -54,11 +60,17 @@ contract Election is AccessControl {
     candidatesRunning.add(candidateId);
   }
 
+  /**
+    For readability. Difference of revokeCandidate and conceedCandidate is to revokeCandidate remove candidate when 
+    it still nomination time while the later is to remove when election has ended
+  */
+ 
   function revokeCandidate(uint256 candidateId) external onlyStatus(ElectionStatus.NOMINATION) onlyRole(ADMIN_ROLE) {
     require(isCandidateOnThisElection(candidateId), "Election: in not in this election");
     _removeCandidate(candidateId);
   }
 
+  // check revokeCandidate
   function conceedCandidate(
     uint256 candidateId
   )
@@ -80,7 +92,7 @@ contract Election is AccessControl {
   }
 
   function setRole(address newCommissioner) external onlyRole(ADMIN_ROLE) {
-    _setupRole(ADMIN_ROLE, newCommissioner);
+    grantRole(ADMIN_ROLE, newCommissioner);
   }
 
   // Getters

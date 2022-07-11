@@ -18,10 +18,10 @@ contract Election is AccessControl {
   bytes32 public constant ADMIN_ROLE = keccak256("ADMIN");
 
   // The ElectionComission and the admin user from electionCommission is the initial commissioner of this election
-  constructor(address altCommisioner) {
+  constructor() {
     status = ElectionStatus.NOMINATION;
-    grantRole(ADMIN_ROLE, _msgSender());
-    grantRole(ADMIN_ROLE, altCommisioner);
+    _setupRole(ADMIN_ROLE, _msgSender());
+    _setupRole(ADMIN_ROLE, address(this));
   }
 
   // Election Function
@@ -31,6 +31,7 @@ contract Election is AccessControl {
     PLAN next v3: in v3 will add erc20 token instead of ether
   */ 
   function registerVoter() external payable onlyStatus(ElectionStatus.NOMINATION)  {
+    require(!registeredVoter[msg.sender], "Election: Has registered already");
     require(msg.value <= registerFee, "Election: Must pay for registration");
     registeredVoter[msg.sender] = true;
   }

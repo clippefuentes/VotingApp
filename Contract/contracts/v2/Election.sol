@@ -21,7 +21,7 @@ contract Election is AccessControl {
   constructor() payable {
     status = ElectionStatus.NOMINATION;
     _setupRole(ADMIN_ROLE, _msgSender());
-    _setupRole(ADMIN_ROLE, address(this));
+    // _setupRole(ADMIN_ROLE, address(this));
   }
 
   fallback() external payable {}
@@ -115,7 +115,7 @@ contract Election is AccessControl {
 
   // Modifier
   modifier onlyStatus(ElectionStatus _status) {
-    require(status == _status, "Election: Not following status");
+    require(status == _status, "Election: Can't call due to status");
     _;
   }
 

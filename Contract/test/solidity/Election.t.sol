@@ -11,6 +11,7 @@ contract ElectionTest is Test {
         election = new Election();
     }
 
+    // registerVoter
     function testFailRegisterVoterNoBalance() public {
         vm.prank(voter1);
         election.registerVoter{value: 0.5 ether}();
@@ -35,17 +36,26 @@ contract ElectionTest is Test {
         vm.stopPrank();
     }
 
-    // function testNumberIs42() public {
-    //     assertEq(testNumber, 42);
-    // }
+    function testFailRegisterVoterIfElection() public {
+        election.startElection();
+        vm.deal(voter1, 1 ether);
+        vm.prank(voter1);
+        election.registerVoter{value: 0.5 ether}();
+    }
 
-    // function testFailSubtract43() public {
-    //     testNumber -= 43;
-    // }
+    // startElection
 
-    // function testCannotSubtract43() public {
-    //     vm.expectRevert(stdError.arithmeticError);
-    //     testNumber -= 43;
-    // }
+    function testFailStartElectionIfNotAdmin() public {
+        vm.prank(voter1);
+        election.startElection();
+    }
 
+    function testStartElectionAdmin() public {
+        election.startElection();
+    }
+
+    function testFailStartElectionStatusIsNotNomination() public {
+        election.startElection();
+        election.startElection();
+    }
 }

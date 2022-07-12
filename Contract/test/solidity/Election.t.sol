@@ -17,20 +17,21 @@ contract ElectionTest is Test {
     }
 
     function testFailRegisterVoterNoValue() public {
-        vm.prank(voter1);
         vm.deal(voter1, .5 ether);
+        vm.prank(voter1);
         election.registerVoter();
     }
     function testRegisterVoter() public {
-        vm.prank(voter1);
         vm.deal(voter1, .5 ether);
+        vm.prank(voter1);
         election.registerVoter{value: 0.5 ether}();
     }
 
-    function testFailRegisterVoter() public {
+    function testFailRegisterVoterTwice() public {
+        vm.deal(voter1, 1 ether);
         vm.startPrank(voter1);
-        election.registerVoter();
-        election.registerVoter();
+        election.registerVoter{value: 0.5 ether}();
+        election.registerVoter{value: 0.5 ether}();
         vm.stopPrank();
     }
 

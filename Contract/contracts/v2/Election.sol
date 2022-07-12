@@ -18,12 +18,15 @@ contract Election is AccessControl {
   bytes32 public constant ADMIN_ROLE = keccak256("ADMIN");
 
   // The ElectionComission and the admin user from electionCommission is the initial commissioner of this election
-  constructor() {
+  constructor() payable {
     status = ElectionStatus.NOMINATION;
     _setupRole(ADMIN_ROLE, _msgSender());
     _setupRole(ADMIN_ROLE, address(this));
   }
 
+  fallback() external payable {}
+
+  receive() external payable {}
   // Election Function
 
   /**
@@ -32,7 +35,7 @@ contract Election is AccessControl {
   */ 
   function registerVoter() external payable onlyStatus(ElectionStatus.NOMINATION)  {
     require(!registeredVoter[msg.sender], "Election: Has registered already");
-    require(msg.value <= registerFee, "Election: Must pay for registration");
+    require(msg.value >= registerFee, "Election: Must pay for registration");
     registeredVoter[msg.sender] = true;
   }
 

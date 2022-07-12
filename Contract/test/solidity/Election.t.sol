@@ -11,9 +11,20 @@ contract ElectionTest is Test {
         election = new Election();
     }
 
+    function testFailRegisterVoterNoBalance() public {
+        vm.prank(voter1);
+        election.registerVoter{value: 0.5 ether}();
+    }
+
+    function testFailRegisterVoterNoValue() public {
+        vm.prank(voter1);
+        vm.deal(voter1, .5 ether);
+        election.registerVoter();
+    }
     function testRegisterVoter() public {
         vm.prank(voter1);
-        election.registerVoter();
+        vm.deal(voter1, .5 ether);
+        election.registerVoter{value: 0.5 ether}();
     }
 
     function testFailRegisterVoter() public {

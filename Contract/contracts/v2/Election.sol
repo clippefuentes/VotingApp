@@ -27,7 +27,6 @@ contract Election is AccessControl {
   }
 
   fallback() external payable {}
-
   receive() external payable {}
   // Election Function
 
@@ -58,16 +57,13 @@ contract Election is AccessControl {
   */
 
   function endElection() external onlyStatus(ElectionStatus.ELECTION) onlyRole(ADMIN_ROLE) electionTimeEnded {
-    status = ElectionStatus.END;
-    getElectionWinner();
+    setElectionWinner();
   }
 
-  function getElectionWinner()
-    internal 
-    onlyStatus(ElectionStatus.END)
+  function setElectionWinner()
+    internal
     onlyRole(ADMIN_ROLE)
     electionTimeEnded
-    // returns (uint)
     {
     uint currentWinnerId = 0;
     uint currentWinnerVotes = 0;
@@ -83,11 +79,13 @@ contract Election is AccessControl {
     assert(currentWinnerVotes > 0);
     winnerID = currentWinnerId;
     winnerVotes = currentWinnerVotes;
+    status = ElectionStatus.END;
   }
 
   // Candidate Function
 
   function nominateCandidate(uint256 candidateId) external onlyStatus(ElectionStatus.NOMINATION) onlyRole(ADMIN_ROLE) {
+    require(candidateId > 0, "Election: Can nominate valid candidate");
     require(!isCandidateOnThisElection(candidateId), "Election: Already in this election");
     candidatesRunning.add(candidateId);
   }

@@ -10,15 +10,19 @@ import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol"
 
 
 contract ElectionCommission is AccessControl {
-  bytes32 public constant COMMISSION_ROLE = keccak256("COMMISSION");
+  bytes32 public constant ADMIN_ROLE = keccak256("COMMISSION");
   IERC721 internal candidatesContract;
   mapping(uint => bool) internal isOnElection;
   uint256 private electionId = 0;
 
   constructor(
     IERC721 _candidatesContract
-  )  {
-    _setupRole(COMMISSION_ROLE, _msgSender());
+  ) payable {
+    _setupRole(ADMIN_ROLE, _msgSender());
     candidatesContract = _candidatesContract;
+  }
+
+  function setAdminUser(address _newAdmin) external onlyRole(ADMIN_ROLE) {
+    grantRole(ADMIN_ROLE, newCommissioner);
   }
 }

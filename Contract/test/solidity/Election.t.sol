@@ -51,6 +51,8 @@ contract ElectionTest is Test {
     }
 
     function testStartElectionAdmin() public {
+        election.nominateCandidate(1);
+        election.nominateCandidate(2);
         election.startElection();
     }
 
@@ -58,4 +60,44 @@ contract ElectionTest is Test {
         election.startElection();
         election.startElection();
     }
+
+    // endElection
+    function testFailEndElectionIfIsElectionTimeNotEnded() public {
+        election.startElection();
+        election.endElection();
+    }
+
+    function testExpectRevertStartElectionIfNoCandidates() public {
+        vm.expectRevert(abi.encodePacked("Election: Election must have two candidates to start"));
+        election.startElection();
+    }
+
+    function testFailEndElectionCallByNonAdmin() public {
+        election.startElection();
+        vm.prank(voter1);
+        election.endElection();
+    }
+
+    function testElectionFlow() public {
+        election.nominateCandidate(5);
+        election.nominateCandidate(10);
+        vm.deal(voter1, .5 ether);
+        vm.deal(address(2), .5 ether);
+        vm.prank(voter1);
+        election.registerVoter{value: 0.5 ether}();
+        vm.prank(address(2));
+        election.registerVoter{value: 0.5 ether}();
+        election.startElection();
+        vm.prank(voter1);
+        election.voteCandidate(5);
+        vm.prank(address(2));
+        election.voteCandidate(5);
+        vm.warp(1 days + 1 seconds);
+        election.endElection();
+        uint electionCandidateWinterId = election.winnerID();
+        uint electionCandidateWinterVotes = election.winnerVotes();
+        assertEq(electionCandidateWinterId, 5);
+        assertEq(electionCandidateWinterVotes, 2);
+    }
+
 }

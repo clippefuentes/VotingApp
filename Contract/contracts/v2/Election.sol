@@ -14,6 +14,8 @@ contract Election is AccessControl {
   mapping(address => bool) internal hasVote;
   uint private registerFee  = 0.5 ether;
   uint private endDate;
+  uint public winnerID;
+  uint public winnerVotes;
 
   bytes32 public constant ADMIN_ROLE = keccak256("ADMIN");
 
@@ -43,6 +45,8 @@ contract Election is AccessControl {
     Start election, only ADMIN can start election and can start if only its on NOMINATION mode
   */
   function startElection() external onlyStatus(ElectionStatus.NOMINATION) onlyRole(ADMIN_ROLE)  {
+    uint candidateLength = candidateRunning().length;
+    require(candidateLength >= 2, "Election: Election must have two candidates to start");
     status = ElectionStatus.ELECTION;
     endDate = block.timestamp + 1 days;
   }
@@ -55,6 +59,30 @@ contract Election is AccessControl {
 
   function endElection() external onlyStatus(ElectionStatus.ELECTION) onlyRole(ADMIN_ROLE) electionTimeEnded {
     status = ElectionStatus.END;
+    getElectionWinner();
+  }
+
+  function getElectionWinner()
+    internal 
+    onlyStatus(ElectionStatus.END)
+    onlyRole(ADMIN_ROLE)
+    electionTimeEnded
+    // returns (uint)
+    {
+    uint currentWinnerId = 0;
+    uint currentWinnerVotes = 0;
+    uint candidateLength = candidateRunning().length;
+    require(candidateLength >= 2, "Election: Election must have two candidates to start");
+    for (uint i = 0; i < candidateLength; i++) {
+      if(votes[candidatesRunning.at(i)] > currentWinnerVotes) {
+        currentWinnerId = candidatesRunning.at(i);
+        currentWinnerVotes = votes[currentWinnerId];
+      }
+    }
+    assert(currentWinnerId != 0);
+    assert(currentWinnerVotes > 0);
+    winnerID = currentWinnerId;
+    winnerVotes = currentWinnerVotes;
   }
 
   // Candidate Function
@@ -125,7 +153,7 @@ contract Election is AccessControl {
   }
 
   modifier electionTimeEnded() {
-    require(block.timestamp >= endDate, "Election: Election time has ended");
+    require(block.timestamp >= endDate, "Election: Election not time has ended");
     _;
   }
 }

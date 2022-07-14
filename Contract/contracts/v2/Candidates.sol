@@ -16,7 +16,7 @@ contract Candidates is AccessControl, ERC721Enumerable  {
    constructor() ERC721("Candidate", "Cand") {
     _setupRole(ADMIN_ROLE, _msgSender());
     _setupRole(MINTER_ROLE, _msgSender());
-    _safeMint(address(0), 0);
+    _safeMint(address(this), 0);
    }
 
    function mintCandidate(

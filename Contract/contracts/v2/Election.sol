@@ -20,10 +20,10 @@ contract Election is AccessControl, IElection {
   bytes32 public constant ADMIN_ROLE = keccak256("ADMIN");
 
   // The ElectionComission and the admin user from electionCommission is the initial commissioner of this election
-  constructor() payable {
+  constructor(address initialCommisioner) payable {
     status = ElectionStatus.NOMINATION;
     _setupRole(ADMIN_ROLE, _msgSender());
-    // _setupRole(ADMIN_ROLE, address(this));
+    _setupRole(ADMIN_ROLE, initialCommisioner);
   }
 
   fallback() external payable {}

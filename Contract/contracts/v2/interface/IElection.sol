@@ -6,3 +6,7 @@ enum ElectionStatus {
   ELECTION,
   END
 }
+
+interface IElection {
+  function registerVoter() external payable;
+}

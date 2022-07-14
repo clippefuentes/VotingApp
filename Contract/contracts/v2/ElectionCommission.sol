@@ -7,6 +7,7 @@ import {
   IERC721
 } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { IElection } from "./interface/IElection.sol";
 
 
 contract ElectionCommission is AccessControl {

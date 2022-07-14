@@ -3,9 +3,9 @@ pragma solidity ^0.8.13;
 
 import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
-import { ElectionStatus } from "./interface/IElection.sol";
+import { ElectionStatus, IElection } from "./interface/IElection.sol";
 
-contract Election is AccessControl {
+contract Election is AccessControl, IElection {
   using EnumerableSet for EnumerableSet.UintSet;
   ElectionStatus public status;
   mapping(uint256 => uint256) public votes;

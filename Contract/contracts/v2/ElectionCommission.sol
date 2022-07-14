@@ -23,6 +23,6 @@ contract ElectionCommission is AccessControl {
   }
 
   function setAdminUser(address _newAdmin) external onlyRole(ADMIN_ROLE) {
-    grantRole(ADMIN_ROLE, newCommissioner);
+    grantRole(ADMIN_ROLE, _newAdmin);
   }
 }

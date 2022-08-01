@@ -9,4 +9,6 @@ enum ElectionStatus {
 
 interface IElection {
   function registerVoter() external payable;
+
+  function startElection() external;
 }

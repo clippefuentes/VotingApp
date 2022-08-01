@@ -18,10 +18,13 @@ contract Election is AccessControl, IElection {
   uint public winnerVotes;
 
   bytes32 public constant ADMIN_ROLE = keccak256("ADMIN");
+  bytes32 public constant COMMISIONER_ROLE = keccak256("COMMISIONER");
 
   // The ElectionComission and the admin user from electionCommission is the initial commissioner of this election
   constructor(address initialCommisioner) payable {
+    require(address(0) != initialCommisioner, "Election: need initial address");
     status = ElectionStatus.NOMINATION;
+    _setupRole(COMMISIONER_ROLE,  _msgSender());
     _setupRole(ADMIN_ROLE, _msgSender());
     _setupRole(ADMIN_ROLE, initialCommisioner);
   }
@@ -82,7 +85,11 @@ contract Election is AccessControl, IElection {
     setElectionWinner();
   }
 
-  function nominateCandidate(uint256 candidateId) external onlyStatus(ElectionStatus.NOMINATION) onlyRole(ADMIN_ROLE) {
+  function nominateCandidate(uint256 candidateId)
+    external
+    onlyStatus(ElectionStatus.NOMINATION)
+    onlyRole(COMMISIONER_ROLE)
+  {
     require(candidateId > 0, "Election: Can nominate valid candidate");
     require(!isCandidateOnThisElection(candidateId), "Election: Already in this election");
     candidatesRunning.add(candidateId);
@@ -93,7 +100,10 @@ contract Election is AccessControl, IElection {
     it still nomination time while the later is to remove when election has ended
   */
  
-  function revokeCandidate(uint256 candidateId) external onlyStatus(ElectionStatus.NOMINATION) onlyRole(ADMIN_ROLE) {
+  function revokeCandidate(uint256 candidateId)
+    external
+    onlyStatus(ElectionStatus.NOMINATION)
+    onlyRole(COMMISIONER_ROLE) {
     require(isCandidateOnThisElection(candidateId), "Election: in not in this election");
     _removeCandidate(candidateId);
   }
@@ -104,7 +114,7 @@ contract Election is AccessControl, IElection {
   )
     external
     onlyStatus(ElectionStatus.END)
-    onlyRole(ADMIN_ROLE)
+    onlyRole(COMMISIONER_ROLE)
     electionTimeEnded 
   {
     require(isCandidateOnThisElection(candidateId), "Election: in not in this election");
@@ -119,7 +129,7 @@ contract Election is AccessControl, IElection {
     hasVote[msg.sender] = true;
   }
 
-  function setRole(address newCommissioner) external onlyRole(ADMIN_ROLE) {
+  function setAdminRole(address newCommissioner) external onlyRole(ADMIN_ROLE) {
     grantRole(ADMIN_ROLE, newCommissioner);
   }
 

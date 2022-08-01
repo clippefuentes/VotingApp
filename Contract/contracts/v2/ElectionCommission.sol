@@ -39,4 +39,7 @@ contract ElectionCommission is AccessControl {
     electionId++;
     emit CreateElection(address(election));
   }
+
+  function electCandidate() external onlyRole(ADMIN_ROLE) {
+  }
 }

@@ -8,7 +8,7 @@ contract ElectionTest is Test {
     Election public election;
     address public voter1 = address(1);
     function setUp() public {
-        election = new Election();
+        election = new Election(msg.sender);
     }
 
     // registerVoter

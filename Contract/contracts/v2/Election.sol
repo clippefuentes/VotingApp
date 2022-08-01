@@ -28,38 +28,8 @@ contract Election is AccessControl, IElection {
 
   fallback() external payable {}
   receive() external payable {}
-  // Election Function
 
-  /**
-    Before voting user must register, in V2 we only register when user sends registerFee to register
-    PLAN next v3: in v3 will add erc20 token instead of ether
-  */ 
-  function registerVoter() external payable onlyStatus(ElectionStatus.NOMINATION)  {
-    require(!registeredVoter[msg.sender], "Election: Has registered already");
-    require(msg.value >= registerFee, "Election: Must pay for registration");
-    registeredVoter[msg.sender] = true;
-  }
-
-  /**
-    Start election, only ADMIN can start election and can start if only its on NOMINATION mode
-  */
-  function startElection() external onlyStatus(ElectionStatus.NOMINATION) onlyRole(ADMIN_ROLE)  {
-    uint candidateLength = candidateRunning().length;
-    require(candidateLength >= 2, "Election: Election must have two candidates to start");
-    status = ElectionStatus.ELECTION;
-    endDate = block.timestamp + 1 days;
-  }
-
-  /**
-    End election, only ElectionCommitioner can start election and can start if only its on ELECTION mode
-    and when its way past on its eleciton end date
-    PLAN: This can be automated.
-  */
-
-  function endElection() external onlyStatus(ElectionStatus.ELECTION) onlyRole(ADMIN_ROLE) electionTimeEnded {
-    setElectionWinner();
-  }
-
+  // -------------- Internal
   function setElectionWinner()
     internal
     onlyRole(ADMIN_ROLE)
@@ -82,7 +52,35 @@ contract Election is AccessControl, IElection {
     status = ElectionStatus.END;
   }
 
-  // Candidate Function
+  // -------------- External
+  /**
+    Before voting user must register, in V2 we only register when user sends registerFee to register
+    PLAN next v3: in v3 will add erc20 token instead of ether
+  */ 
+  function registerVoter() external payable onlyStatus(ElectionStatus.NOMINATION)  {
+    require(!registeredVoter[msg.sender], "Election: Has registered already");
+    require(msg.value >= registerFee, "Election: Must pay for registration");
+    registeredVoter[msg.sender] = true;
+  }
+
+  /**
+    Start election, only ADMIN can start election and can start if only its on NOMINATION mode
+  */
+  function startElection() external onlyStatus(ElectionStatus.NOMINATION) onlyRole(ADMIN_ROLE)  {
+    uint candidateLength = candidateRunning().length;
+    require(candidateLength >= 2, "Election: Election must have two candidates to start");
+    status = ElectionStatus.ELECTION;
+    endDate = block.timestamp + 1 days;
+  }
+  /**
+    End election, only ElectionCommitioner can start election and can start if only its on ELECTION mode
+    and when its way past on its eleciton end date
+    PLAN: This can be automated.
+  */
+
+  function endElection() external onlyStatus(ElectionStatus.ELECTION) onlyRole(ADMIN_ROLE) electionTimeEnded {
+    setElectionWinner();
+  }
 
   function nominateCandidate(uint256 candidateId) external onlyStatus(ElectionStatus.NOMINATION) onlyRole(ADMIN_ROLE) {
     require(candidateId > 0, "Election: Can nominate valid candidate");
@@ -125,7 +123,7 @@ contract Election is AccessControl, IElection {
     grantRole(ADMIN_ROLE, newCommissioner);
   }
 
-  // Getters
+  // -------------- Public 
   function candidateRunning() public view returns (uint256[] memory) {
     return candidatesRunning.values();
   }

@@ -11,6 +11,7 @@ import { IElection } from "./interface/IElection.sol";
 import { Election } from "./Election.sol";
 
 
+
 contract ElectionCommission is AccessControl {
   bytes32 public constant ADMIN_ROLE = keccak256("COMMISSION");
   IERC721 internal candidatesContract;
@@ -23,10 +24,10 @@ contract ElectionCommission is AccessControl {
   event CreateElection(address indexed _election);
 
   constructor(
-    IERC721 _candidatesContract
+    // IERC721 _candidatesContract
   ) payable {
     _setupRole(ADMIN_ROLE, _msgSender());
-    candidatesContract = _candidatesContract;
+    // candidatesContract = _candidatesContract;
   }
 
   function setAdminUser(address _newAdmin) external onlyRole(ADMIN_ROLE) {
@@ -40,6 +41,13 @@ contract ElectionCommission is AccessControl {
     emit CreateElection(address(election));
   }
 
-  function electCandidate() external onlyRole(ADMIN_ROLE) {
+  function nominateCandidate(uint _candidateId, uint _electionId) external onlyRole(ADMIN_ROLE) {
+    Election election = elections[_electionId];
+    require(address(election) != address(0), "ElectionCommissioner: Election not existing");
+    election.nominateCandidate(_candidateId);
+  }
+
+  function getLatestElectionContractAddress() public view returns (address) {
+    return address(elections[electionId - 1]);
   }
 }

@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "@std/Test.sol";
 import "@std/console.sol";
 
-import { ElectionCommission } from "../../contracts/v2/ElectionCommission.sol";
+import { ElectionCommission } from "../../contracts/v2/Proxy/ElectionCommission.sol";
 
 contract ElectionTest is Test {
     ElectionCommission public electioncommision;

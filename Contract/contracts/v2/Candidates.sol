@@ -1,23 +1,31 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import { ERC721Enumerable, ERC721 } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
 
 import { Position, Candidate } from "./interface/ICandidates.sol";
 
-contract Candidates is AccessControl, ERC721Enumerable  {
+contract Candidates is AccessControl, ERC721EnumerableUpgradeable   {
    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN");
    bytes32 public constant MINTER_ROLE = keccak256("MINTER");
 
   uint256 public nextId  = 0;
   mapping(uint => Candidate) public candidates;
 
-   constructor() ERC721("Candidate", "Cand") {
+  //  constructor() ERC721("Candidate", "Cand") {
+  //   _setupRole(ADMIN_ROLE, _msgSender());
+  //   _setupRole(MINTER_ROLE, _msgSender());
+  //   _safeMint(address(this), 0);
+  //  }
+
+  function initialize() initializer public {
+    __ERC721_init("Candidate", "Cand");
     _setupRole(ADMIN_ROLE, _msgSender());
     _setupRole(MINTER_ROLE, _msgSender());
     _safeMint(address(this), 0);
-   }
+  }
 
    function mintCandidate(
     string memory name,

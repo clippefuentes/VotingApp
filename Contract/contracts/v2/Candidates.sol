@@ -3,14 +3,11 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
-
 import { Position, Candidate } from "./interface/ICandidates.sol";
 
-contract Candidates is AccessControl, ERC721EnumerableUpgradeable   {
-   bytes32 public constant ADMIN_ROLE = keccak256("ADMIN");
-   bytes32 public constant MINTER_ROLE = keccak256("MINTER");
-
+contract Candidates is AccessControlUpgradeable, ERC721EnumerableUpgradeable   {
+  bytes32 public constant ADMIN_ROLE = keccak256("ADMIN");
+  bytes32 public constant MINTER_ROLE = keccak256("MINTER");
   uint256 public nextId  = 0;
   mapping(uint => Candidate) public candidates;
 
@@ -64,7 +61,7 @@ contract Candidates is AccessControl, ERC721EnumerableUpgradeable   {
   // -------- Modifier
 
   // Override
-  function supportsInterface(bytes4 interfaceId) public view override(AccessControl, ERC721Enumerable) returns (bool) {
+  function supportsInterface(bytes4 interfaceId) public view override(AccessControlUpgradeable, ERC721EnumerableUpgradeable) returns (bool) {
     return super.supportsInterface(interfaceId);
   }
 } 

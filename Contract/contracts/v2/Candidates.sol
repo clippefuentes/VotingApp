@@ -61,7 +61,10 @@ contract Candidates is AccessControlUpgradeable, ERC721EnumerableUpgradeable   {
   // -------- Modifier
 
   // Override
-  function supportsInterface(bytes4 interfaceId) public view override(AccessControlUpgradeable, ERC721EnumerableUpgradeable) returns (bool) {
+  function supportsInterface(bytes4 interfaceId)
+    public view override(AccessControlUpgradeable, ERC721EnumerableUpgradeable) 
+    returns (bool) 
+  {
     return super.supportsInterface(interfaceId);
   }
 } 

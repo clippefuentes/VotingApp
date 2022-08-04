@@ -51,8 +51,4 @@ contract ElectionCommission is Initializable, AccessControlUpgradeable {
     require(address(election) != address(0), "ElectionCommissioner: Election not existing");
     election.nominateCandidate(_candidateId);
   }
-
-  function getLatestElectionContractAddress() public view returns (address) {
-    return address(elections[electionId - 1]);
-  }
 }

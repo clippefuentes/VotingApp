@@ -13,7 +13,7 @@ contract Election is AccessControl, IElection {
   mapping(address => bool) internal registeredVoter;
   mapping(address => bool) internal hasVote;
   uint private registerFee  = 0.5 ether;
-  uint private endDate;
+  uint public endDate;
   uint public winnerID;
   uint public winnerVotes;
 

@@ -5,7 +5,7 @@ import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC
 import { IERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import { IElection } from "../interface/IElection.sol";
+import { IElection, ElectionStatus } from "../interface/IElection.sol";
 import { Election } from "../Election.sol";
 
 
@@ -49,6 +49,8 @@ contract ElectionCommission is Initializable, AccessControlUpgradeable {
   function nominateCandidate(uint _candidateId, uint _electionId) external onlyRole(ADMIN_ROLE) {
     require(!isOnElection[_candidateId], "ElectionCommission: Candidate is on election");
     Election election = elections[_electionId];
+    require(election.status() == ElectionStatus.NOMINATION, "ElectionCommission: Is not in nomination mode");
+    require(election.endDate() == 0, "ElectionCommission: Election has now started, candidate can backout");
     require(address(election) != address(0), "ElectionCommissioner: Election not existing");
     election.nominateCandidate(_candidateId);
     isOnElection[_candidateId] = true;
@@ -57,7 +59,25 @@ contract ElectionCommission is Initializable, AccessControlUpgradeable {
   function revokeCandidate(uint _candidateId, uint _electionId) external onlyRole(ADMIN_ROLE) {
     require(isOnElection[_candidateId], "ElectionCommission: Candidate is not on election");
     Election election = elections[_electionId];
+    require(election.status() == ElectionStatus.NOMINATION, "ElectionCommission: Is not in nomination mode");
+    require(
+      election.endDate() == 0, 
+      "ElectionCommission: candidate cant backout"
+    );
     require(address(election) != address(0), "ElectionCommissioner: Election not existing");
+    election.revokeCandidate(_candidateId);
+    isOnElection[_candidateId] = false;
+  }
+
+  function conceedCandidate(uint _candidateId, uint _electionId) external onlyRole(ADMIN_ROLE) {
+    require(isOnElection[_candidateId], "ElectionCommission: Candidate is not on election");
+    Election election = elections[_electionId];
+    require(election.status() == ElectionStatus.END, "ElectionCommission: Election still ongoing");
+    require(address(election) != address(0), "ElectionCommissioner: Election not existing");
+    require(
+      block.timestamp >= election.endDate(), 
+      "ElectionCommission: Election not ended"
+    );
     election.revokeCandidate(_candidateId);
     isOnElection[_candidateId] = false;
   }

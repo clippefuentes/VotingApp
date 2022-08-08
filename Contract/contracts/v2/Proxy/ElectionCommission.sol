@@ -47,8 +47,18 @@ contract ElectionCommission is Initializable, AccessControlUpgradeable {
   }
 
   function nominateCandidate(uint _candidateId, uint _electionId) external onlyRole(ADMIN_ROLE) {
+    require(!isOnElection[_candidateId], "ElectionCommission: Candidate is on election");
     Election election = elections[_electionId];
     require(address(election) != address(0), "ElectionCommissioner: Election not existing");
     election.nominateCandidate(_candidateId);
+    isOnElection[_candidateId] = true;
+  }
+
+  function revokeCandidate(uint _candidateId, uint _electionId) external onlyRole(ADMIN_ROLE) {
+    require(isOnElection[_candidateId], "ElectionCommission: Candidate is not on election");
+    Election election = elections[_electionId];
+    require(address(election) != address(0), "ElectionCommissioner: Election not existing");
+    election.revokeCandidate(_candidateId);
+    isOnElection[_candidateId] = false;
   }
 }

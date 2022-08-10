@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import {
+  EnumerableSetUpgradeable
+} from "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
 import { ElectionStatus, IElection } from "./interface/IElection.sol";
 
 contract Election is AccessControl, IElection {
-  using EnumerableSet for EnumerableSet.UintSet;
+  using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
   ElectionStatus public status;
   mapping(uint256 => uint256) public votes;
-  EnumerableSet.UintSet internal candidatesRunning;
+  EnumerableSetUpgradeable.UintSet internal candidatesRunning;
   mapping(address => bool) internal registeredVoter;
   mapping(address => bool) internal hasVote;
   uint private registerFee  = 0.5 ether;

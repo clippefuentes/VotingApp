@@ -14,13 +14,15 @@ import { Election } from "../Election.sol";
 
 
 contract ElectionCommission is Initializable, AccessControlUpgradeable {
+  using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
+  EnumerableSetUpgradeable.UintSet internal electionsIds;
+  EnumerableSetUpgradeable.UintSet internal pastElectionsIds;
   bytes32 public constant ADMIN_ROLE = keccak256("COMMISSION");
   IERC721Upgradeable internal candidatesContract;
   mapping(uint => bool) internal isOnElection;
   // Starting from 1
   uint256 private electionId = 1;
   mapping(uint => Election) public elections;
-  mapping(uint => bool) public electionOnGoing;
 
   event CreateElection(address indexed _election);
 
@@ -45,7 +47,9 @@ contract ElectionCommission is Initializable, AccessControlUpgradeable {
   function createElection() external onlyRole(ADMIN_ROLE) {
     Election election = new Election(msg.sender);
     elections[electionId] = election;
+    electionsIds.add(electionId);
     electionId++;
+    
     emit CreateElection(address(election));
   }
 
@@ -53,7 +57,7 @@ contract ElectionCommission is Initializable, AccessControlUpgradeable {
     require(!isOnElection[_candidateId], "ElectionCommission: Candidate is on election");
     Election election = elections[_electionId];
     require(election.status() == ElectionStatus.NOMINATION, "ElectionCommission: Is not in nomination mode");
-    require(election.endDate() == 0, "ElectionCommission: Election has now started, candidate can backout");
+    require(election.endDate() == 0, "ElectionCommission: candidate cant backout");
     require(address(election) != address(0), "ElectionCommissioner: Election not existing");
     election.nominateCandidate(_candidateId);
     isOnElection[_candidateId] = true;
@@ -83,5 +87,12 @@ contract ElectionCommission is Initializable, AccessControlUpgradeable {
     );
     election.revokeCandidate(_candidateId);
     isOnElection[_candidateId] = false;
+  }
+
+  function endElection(uint _electionId) external onlyRole(ADMIN_ROLE) {
+    Election election = elections[_electionId];
+    election.endElection();
+    electionsIds.remove(_electionId);
+    pastElectionsIds.add(_electionId);
   }
 }

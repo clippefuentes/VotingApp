@@ -95,4 +95,9 @@ contract ElectionCommission is Initializable, AccessControlUpgradeable {
     electionsIds.remove(_electionId);
     pastElectionsIds.add(_electionId);
   }
+
+  function startElection(uint _electionId) external onlyRole(ADMIN_ROLE) {
+    Election election = elections[_electionId];
+    election.startElection();
+  }
 }

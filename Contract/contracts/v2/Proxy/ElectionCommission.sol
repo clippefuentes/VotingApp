@@ -100,4 +100,12 @@ contract ElectionCommission is Initializable, AccessControlUpgradeable {
     Election election = elections[_electionId];
     election.startElection();
   }
+
+  function getElectionIds() public view returns (uint[] memory) {
+    return electionsIds.values();
+  }
+
+  function getPastElectionIds() public view returns (uint[] memory) {
+    return pastElectionsIds.values();
+  }
 }

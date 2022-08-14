@@ -17,7 +17,7 @@ contract Candidates is AccessControlUpgradeable, ERC721EnumerableUpgradeable   {
   //   _safeMint(address(this), 0);
   //  }
 
-  function initialize() initializer public {
+  function initialize() public initializer  {
     __ERC721_init("Candidate", "Cand");
     _setupRole(ADMIN_ROLE, _msgSender());
     _setupRole(MINTER_ROLE, _msgSender());
@@ -67,4 +67,6 @@ contract Candidates is AccessControlUpgradeable, ERC721EnumerableUpgradeable   {
   {
     return super.supportsInterface(interfaceId);
   }
+
+  
 } 

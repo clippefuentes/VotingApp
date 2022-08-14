@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import "@std/Test.sol";
 import { Election } from "../../contracts/v2/Election.sol";
+import { ElectionStatus } from "../../contracts/v2/interface/IElection.sol";
 
 contract ElectionTest is Test {
     Election public election;
@@ -34,6 +35,14 @@ contract ElectionTest is Test {
         election.registerVoter{value: 0.5 ether}();
         election.registerVoter{value: 0.5 ether}();
         vm.stopPrank();
+    }
+
+    function testElectionElectionStatus() public {
+        assert(election.status() == ElectionStatus.NOMINATION);
+        election.nominateCandidate(1);
+        election.nominateCandidate(2);
+        election.startElection();
+        assert(election.status() == ElectionStatus.ELECTION);
     }
 
     function testFailRegisterVoterIfElection() public {

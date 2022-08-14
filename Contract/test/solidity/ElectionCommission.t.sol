@@ -13,6 +13,7 @@ contract ElectionTest is Test {
     address public mockNonAdminCaller = address(1);
     function setUp() public {
         electioncommision = new ElectionCommission();
+        electioncommision.initialize();
     }
 
     function testFailCreateElectionIfNonAdmin() public {

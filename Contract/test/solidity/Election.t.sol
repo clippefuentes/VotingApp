@@ -37,14 +37,6 @@ contract ElectionTest is Test {
         vm.stopPrank();
     }
 
-    function testElectionElectionStatus() public {
-        assert(election.status() == ElectionStatus.NOMINATION);
-        election.nominateCandidate(1);
-        election.nominateCandidate(2);
-        election.startElection();
-        assert(election.status() == ElectionStatus.ELECTION);
-    }
-
     function testFailRegisterVoterIfElection() public {
         election.startElection();
         vm.deal(voter1, 1 ether);
@@ -88,6 +80,7 @@ contract ElectionTest is Test {
     }
 
     function testElectionFlow() public {
+        assert(election.status() == ElectionStatus.NOMINATION);
         election.nominateCandidate(5);
         election.nominateCandidate(10);
         vm.deal(voter1, .5 ether);
@@ -97,16 +90,17 @@ contract ElectionTest is Test {
         vm.prank(address(2));
         election.registerVoter{value: 0.5 ether}();
         election.startElection();
+        assert(election.status() == ElectionStatus.ELECTION);
         vm.prank(voter1);
         election.voteCandidate(5);
         vm.prank(address(2));
         election.voteCandidate(5);
         vm.warp(1 days + 1 seconds);
         election.endElection();
+        assert(election.status() == ElectionStatus.END);
         uint electionCandidateWinterId = election.winnerID();
         uint electionCandidateWinterVotes = election.winnerVotes();
         assertEq(electionCandidateWinterId, 5);
         assertEq(electionCandidateWinterVotes, 2);
     }
-
 }
